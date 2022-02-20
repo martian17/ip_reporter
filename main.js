@@ -291,7 +291,7 @@ let main = async function(){
     bot.sub("reload").addFunc(async (msg,substr)=>{
         if(!selected)return;
         msg.reply(
-            `${getName()}> Reloading, select again when it comes online`
+            `${getName()}> Reloading, select again when it comes back online`
         );
         throw new Error("random uncaught error");
     });
