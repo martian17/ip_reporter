@@ -304,7 +304,7 @@ let main = async function(){
     bot.sub("ping").addFunc(async (msg,substr)=>{
         if(!selected)return;
         msg.reply(
-            `${getName()}> pong`
+            `${getName()}> Pong!`
         );
     });
 };
