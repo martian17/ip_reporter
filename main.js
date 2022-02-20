@@ -276,6 +276,12 @@ let main = async function(){
             `${getName()}> alias changed from "${old}" to "${getName()}"`
         );
     });
+    bot.sub("github").addFunc(async (msg,substr)=>{
+        if(!selected)return;
+        msg.reply(
+            `${getName()}> https://github.com/martian17/ip_reporter`
+        );
+    });
 };
 
 main();
