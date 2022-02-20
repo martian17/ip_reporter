@@ -1,0 +1,24 @@
+# created following this tutorial: 
+# https://nodesource.com/blog/running-your-node-js-app-with-systemd-part-1/
+
+# first create ip_reporter user with sudo useradd -r ip_reporter
+# then place this file at /lib/systemd/system/
+# replace /path/to/where/main.js/resides with your directory path
+# replace /path/to/main.js with your path to main.js
+# repace /your/node/installation with the location where your node is installed.
+# the node version needs to be later than v16.
+
+[Unit]
+Description=ip_reporter - Reports this PC's IP to discord
+Documentation=https://github.com/martian17/ip_reporter
+After=network.target
+
+[Service]
+Type=simple
+User=ip_reporter
+WorkingDirectory=/path/to/where/main.js/resides
+ExecStart=/your/node/installation /path/to/main.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
