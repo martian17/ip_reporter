@@ -291,7 +291,7 @@ let main = async function(){
     });
     bot.sub("pull").addFunc(async (msg,substr)=>{
         if(!selected)return;
-        exec("git pull", (error, stdout, stderr) => {
+        exec("git pull origin main", (error, stdout, stderr) => {
             if (error) {
                 msg.reply(`${getName()}> pull error: ${error}`);
                 return;
