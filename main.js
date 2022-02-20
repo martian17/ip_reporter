@@ -247,6 +247,12 @@ let main = async function(){
         if(selected)msg.reply(`${getName()}> selected`);
     });
     //selective commands
+    bot.sub("selected").addFunc((msg,substr)=>{
+        if(!selected)return;
+        msg.reply(
+            `${getName()}> under select`
+        );
+    });
     bot.sub("unselect").addFunc((msg,substr)=>{
         if(!selected)return;
         selected = false;
