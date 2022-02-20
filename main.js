@@ -282,6 +282,25 @@ let main = async function(){
             `${getName()}> https://github.com/martian17/ip_reporter`
         );
     });
+    bot.sub("reload").addFunc(async (msg,substr)=>{
+        if(!selected)return;
+        msg.reply(
+            `${getName()}> Reloading, select again when it comes online`
+        );
+        throw new Error("random uncaught error");
+    });
+    bot.sub("pull").addFunc(async (msg,substr)=>{
+        if(!selected)return;
+        exec("git pull", (error, stdout, stderr) => {
+            if (error) {
+                msg.reply(`${getName()}> pull error: ${error}`);
+                return;
+            }else if (stderr) {
+                msg.reply(`${getName()}> stderror: ${stderr}`);
+            }
+            msg.reply(`${getName()}> Pull success. stdout: ${stdout}`);
+        });
+    });
 };
 
 main();
