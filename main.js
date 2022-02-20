@@ -301,6 +301,12 @@ let main = async function(){
             msg.reply(`${getName()}> Pull success. stdout: ${stdout}`);
         });
     });
+    bot.sub("ping").addFunc(async (msg,substr)=>{
+        if(!selected)return;
+        msg.reply(
+            `${getName()}> pong`
+        );
+    });
 };
 
 main();
