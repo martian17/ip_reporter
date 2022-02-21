@@ -150,7 +150,7 @@ let genericCommand = async function(name,cmd,msg,substr){
         }
         msg.reply(`${name}> success. stdout: ${stdout}`);
     }catch(err){
-        msg.reply(`${name}> ${cmd} Error: ${err}`);
+        msg.reply(`${name}> ${cmd} Error: ${(""+err).slice(0,1900)}`);
     }
 };
 
