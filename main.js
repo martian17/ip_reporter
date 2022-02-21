@@ -1,7 +1,9 @@
 const Discord = require("discord.js");
 let Bot = require("dcbot-manager");
 const fs = require("fs").promises;
-const { exec } = require("child_process");
+//const { exec } = require("child_process");
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 
 //json file wrapper class
@@ -68,9 +70,25 @@ let getClient = function(Discord){
     let flags = Discord.Intents.FLAGS;
     const client = new Discord.Client({
         intents: [
+            /*
+                Intents 'GUILDS' is required
+                if you wish to receive (message) events
+                from guilds as well.
+    
+                If you don't want that, do not add it.
+                Your bot will only receive events
+                from Direct Messages only.
+            */
+            'GUILDS',
+            'DIRECT_MESSAGES',
+            'GUILD_MESSAGES'
+        ],
+        partials: ['MESSAGE', 'CHANNEL'] // Needed to get messages from DM's as well
+    }/*{
+        intents: [
             flags.GUILDS, flags.GUILD_MESSAGES
-        ] /*["GUILDS", "GUILD_MESSAGES"]*/
-    });
+        ] //["GUILDS", "GUILD_MESSAGES"]
+    }*/);
     return client;
 };
 
@@ -102,8 +120,17 @@ let initBot = async function(){
     
 };*/
 
-let getIP = function(){
-    return new Promise((res,rej)=>{
+let getIP = async function(){
+    try{
+        const { stdout, stderr } = await exec("curl -s ifconfig.me");
+        if (stderr) {
+            console.log("stderr output from curl: "+stderr);
+        }
+        return stdout;
+    }catch(err){
+        return "entounter an error executing curl: "+err;
+    }
+    /*return new Promise((res,rej)=>{
         exec("curl -s ifconfig.me", (error, stdout, stderr) => {
             if (error) {
                 res("entounter an error executing curl: "+error);//return back the error
@@ -112,7 +139,19 @@ let getIP = function(){
             }
             res(stdout);
         });
-    });
+    });*/
+};
+
+let genericCommand = async function(name,cmd,msg,substr){
+    try{
+        const {stdout,stderr} = await exec(cmd);
+        if (stderr) {
+            msg.reply(`${name}> stderror: ${stderr}`);
+        }
+        msg.reply(`${name}> success. stdout: ${stdout}`);
+    }catch(err){
+        msg.reply(`${name}> ${cmd} Error: ${error}`);
+    }
 };
 
 let splitEscape = function(str,delim){//consecutive delim will result in empty string
@@ -297,21 +336,36 @@ let main = async function(){
     });
     bot.sub("pull").addFunc(async (msg,substr)=>{
         if(!selected)return;
-        exec("git pull origin main", (error, stdout, stderr) => {
-            if (error) {
-                msg.reply(`${getName()}> pull error: ${error}`);
-                return;
-            }else if (stderr) {
+        try{
+            const {stdout,stderr} = await exec("git pull origin main");
+            if (stderr) {
                 msg.reply(`${getName()}> stderror: ${stderr}`);
             }
             msg.reply(`${getName()}> Pull success. stdout: ${stdout}`);
-        });
+        }catch(err){
+            msg.reply(`${getName()}> pull error: ${error}`);
+        }
     });
     bot.sub("ping").addFunc(async (msg,substr)=>{
         if(!selected)return;
         msg.reply(
             `${getName()}> Pong!`
         );
+    });
+    bot.sub("inspect").addFunc(async (msg,substr)=>{
+        if(!selected)return;
+        msg.reply(
+            `${getName()}> ${JSON.stringify(msg)}`
+        );
+    });
+    let npm = bot.sub("npm");
+    npm.sub("update").addFunc(async (msg,substr)=>{
+        if(!selected)return;
+        await genericCommand(getName(),"npm update",msg,substr);
+    });
+    npm.sub("list").addFunc(async (msg,substr)=>{
+        if(!selected)return;
+        await genericCommand(getName(),"npm list",msg,substr);
     });
 };
 
